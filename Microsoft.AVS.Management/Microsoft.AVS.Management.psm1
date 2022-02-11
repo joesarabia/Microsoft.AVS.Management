@@ -257,6 +257,7 @@ function New-AvsLDAPIdentitySource {
         -Username $Credential.UserName `
         -Password $Password `
         -ServerType 'ActiveDirectory' -ErrorAction Stop
+    Write-Host "$DomainName successfully added"
     $ExternalIdentitySources = Get-IdentitySource -External -ErrorAction Continue
     $ExternalIdentitySources | Format-List | Out-String
 
@@ -409,7 +410,7 @@ function New-AvsLDAPSIdentitySource {
 
     $Password = $Credential.GetNetworkCredential().Password
     $DestinationFileArray = Get-Certificates -SSLCertificatesSasUrl $SSLCertificatesSasUrl
-    Write-Host "Adding the LDAPS Identity Source..."
+    Write-Host "Adding the $DomainName LDAPS Identity Source..."
     Add-LDAPIdentitySource `
         -Name $Name `
         -DomainName $DomainName `
@@ -422,6 +423,7 @@ function New-AvsLDAPSIdentitySource {
         -Password $Password `
         -ServerType 'ActiveDirectory' `
         -Certificates $DestinationFileArray -ErrorAction Stop
+    Write-Host "$DomainName successfully added"
     $ExternalIdentitySources = Get-IdentitySource -External -ErrorAction Continue
     $ExternalIdentitySources | Format-List | Out-String
 
@@ -487,7 +489,7 @@ function Get-ExternalIdentitySources {
     [AVSAttribute(3, UpdatesSDDC = $false)]
     Param()
 
-    $ExternalSource = Get-IdentitySource -External
+    $ExternalSource = Get-IdentitySource -External -ErrorAction Stop
     if ($null -eq $ExternalSource) {
         Write-Output "No external identity sources found."
         return
@@ -514,7 +516,7 @@ function Remove-ExternalIdentitySources {
         $DomainName
     )
 
-    $ExternalSource = Get-IdentitySource -External
+    $ExternalSource = Get-IdentitySource -External -ErrorAction Stop
     if ($null -eq $ExternalSource) {
         Write-Output "No external identity sources found to remove. Nothing done"
         return
